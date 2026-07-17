@@ -34,7 +34,6 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.4.1</version>
                 <configuration>
-                    <outputDirectory>C:/Users/42073/Desktop/mcserver/plugins</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -316,13 +315,7 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/Residence5.1.6.2.jar</systemPath>
         </dependency>
-        <dependency>
-            <groupId>eu.athelion.territory</groupId>
-            <artifactId>Territory</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/Territory-1.2.1.jar</systemPath>
-        </dependency>
+
         <dependency>
             <groupId>com.github.GriefPrevention</groupId>
             <artifactId>GriefPrevention</artifactId>

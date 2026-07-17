@@ -50,10 +50,10 @@ public class ConfirmationMenu<T> extends Menu {
                     item.draw(getPlaceholders())
                             .asGuiItem(event -> {
                                 if (item.getAction() instanceof ConfirmAction) {
-                                    if (action.hasFee()) {
+                                    if (action.hasFee(player)) {
                                         if (!HookRegister.mapIfEnabled(VaultHook.class, vaultHook ->
-                                                vaultHook.getApi().has(player, action.getFee()), false)) {
-                                            player.sendMessage(Lang.INSUFFICIENT_BALANCE_FOR_ACTION.asColoredString().replace("%price%", NumberUtil.formatNumber(action.getFee())));
+                                                vaultHook.getApi().has(player, action.getFee(player)), false)) {
+                                            player.sendMessage(Lang.INSUFFICIENT_BALANCE_FOR_ACTION.asColoredString().replace("%price%", NumberUtil.formatNumber(action.getFee(player))));
                                             return;
                                         }
                                     }
@@ -78,9 +78,13 @@ public class ConfirmationMenu<T> extends Menu {
         Map<String,String> placeholders = new HashMap<>();
         placeholders.put("%warp%", warp.getName());
         placeholders.put("%player%", player.getName());
-        if (action != null && action.hasFee()) {
-            placeholders.put("%price%", NumberUtil.formatNumber(action.getFee()));
+        if (action != null && action.hasFee(player)) {
+            placeholders.put("%price%", NumberUtil.formatNumber(action.getFee(player)));
         } else {
+            placeholders.put(" (- $%price%)", "");
+            placeholders.put(" (-%price% $)", "");
+            placeholders.put("(- $%price%)", "");
+            placeholders.put("(-%price% $)", "");
             placeholders.put("%price%", Lang.FREE_OF_CHARGE.asColoredString());
         }
         return placeholders;

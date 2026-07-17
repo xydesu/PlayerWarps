@@ -74,7 +74,7 @@ public class SetPreviewItemAction implements WarpAction<String> {
     }
 
     @Override
-    public int getFee() {
+    public int getFee(Player player) {
         return Config.SET_PREVIEW_ITEM_FEE.asInteger();
     }
 

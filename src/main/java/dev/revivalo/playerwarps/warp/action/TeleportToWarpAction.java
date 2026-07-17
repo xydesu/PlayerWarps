@@ -112,7 +112,7 @@ public class TeleportToWarpAction implements WarpAction<String> {
     }
 
     @Override
-    public int getFee() {
+    public int getFee(Player player) {
         return fee;
     }
 

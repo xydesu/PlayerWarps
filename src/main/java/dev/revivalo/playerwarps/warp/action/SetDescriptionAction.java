@@ -42,7 +42,7 @@ public class SetDescriptionAction implements WarpAction<String> {
     }
 
     @Override
-    public int getFee() {
+    public int getFee(Player player) {
         return Config.SET_DESCRIPTION_FEE.asInteger();
     }
 }

@@ -45,16 +45,16 @@ public interface WarpAction<T> {
                 }
             }
 
-            if (hasFee()) {
+            if (hasFee(player)) {
                 boolean canAfford = HookRegister.mapIfEnabled(VaultHook.class,
-                        vault -> vault.getApi().has(player, getFee()),
+                        vault -> vault.getApi().has(player, getFee(player)),
                         true
                 );
 
                 if (!canAfford) {
                     player.sendMessage(
                             Lang.INSUFFICIENT_BALANCE_FOR_ACTION.asColoredString()
-                                    .replace("%price%", NumberUtil.formatNumber(getFee()))
+                                    .replace("%price%", NumberUtil.formatNumber(getFee(player)))
                     );
                     return;
                 }
@@ -69,11 +69,12 @@ public interface WarpAction<T> {
             }
         }
 
+        int feeToWithdraw = hasFee(player) ? getFee(player) : 0;
         boolean proceeded = execute(player, warp, data);
 
-        if (proceeded && hasFee() && !(this instanceof TeleportToWarpAction)) {
+        if (proceeded && feeToWithdraw > 0 && !(this instanceof TeleportToWarpAction)) {
             HookRegister.ifEnabled(VaultHook.class, vaultHook -> {
-                vaultHook.getApi().withdrawPlayer(player, getFee());
+                vaultHook.getApi().withdrawPlayer(player, feeToWithdraw);
             });
         }
 
@@ -91,8 +92,8 @@ public interface WarpAction<T> {
         return PermissionUtil.Permission.VOID;
     }
 
-    default boolean hasToBeConfirmed() {
-        return hasFee() || this instanceof RemoveWarpAction;
+    default boolean hasToBeConfirmed(Player player) {
+        return hasFee(player) || this instanceof RemoveWarpAction;
     }
 
     default boolean hasInput() {
@@ -103,12 +104,12 @@ public interface WarpAction<T> {
         return null;
     }
 
-    default int getFee() {
+    default int getFee(Player player) {
         return 0;
     }
 
-    default boolean hasFee() {
-        return getFee() != 0;
+    default boolean hasFee(Player player) {
+        return getFee(player) != 0;
     }
 
     default boolean isPublicAction() {

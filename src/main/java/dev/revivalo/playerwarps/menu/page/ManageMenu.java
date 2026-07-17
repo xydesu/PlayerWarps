@@ -59,7 +59,7 @@ public class ManageMenu extends Menu {
                                             proceedAction(player, warp, input, item.getAction());
                                         });
                                     });
-                                } else if (action.hasToBeConfirmed()) {
+                                } else if (action.hasToBeConfirmed(player)) {
                                     openConfirmationMenu(player, warp, item.getAction());
                                 } else if (action instanceof OpenCategorySelection) {
                                     new ChangeTypeMenu(warp).openFor(player);

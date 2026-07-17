@@ -28,8 +28,16 @@ public class RemoveWarpAction implements WarpAction<Void> {
         HookRegister.ifEnabled(BlueMapHook.class, blueMapHook -> blueMapHook.removeMarker(warp));
 
         final OfflinePlayer offlinePlayer = PlayerUtil.getOfflinePlayer(warp.getOwner());
-        HookRegister.ifEnabled(VaultHook.class, vaultHook -> vaultHook.getApi().depositPlayer(offlinePlayer, Config.DELETE_WARP_REFUND.asInteger()));
-        player.sendMessage(Lang.WARP_REMOVED_WITH_REFUND.asColoredString().replace("%warp%", warp.getName()).replace("%refund%", Config.DELETE_WARP_REFUND.asString()));
+        long ownerWarpCount = PlayerWarpsPlugin.getWarpHandler().getWarps().stream()
+                .filter(w -> java.util.Objects.equals(w.getOwner(), warp.getOwner()))
+                .count();
+
+        if (ownerWarpCount >= Config.FREE_WARPS.asInteger()) {
+            HookRegister.ifEnabled(VaultHook.class, vaultHook -> vaultHook.getApi().depositPlayer(offlinePlayer, Config.DELETE_WARP_REFUND.asInteger()));
+            player.sendMessage(Lang.WARP_REMOVED_WITH_REFUND.asColoredString().replace("%warp%", warp.getName()).replace("%refund%", Config.DELETE_WARP_REFUND.asString()));
+        } else {
+            player.sendMessage(Lang.WARP_REMOVED.asColoredString().replace("%warp%", warp.getName()));
+        }
 
         return true;
     }

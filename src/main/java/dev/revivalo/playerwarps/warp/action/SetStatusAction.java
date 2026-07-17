@@ -30,7 +30,7 @@ public class SetStatusAction implements WarpAction<WarpStatus> {
     }
 
     @Override
-    public int getFee() {
+    public int getFee(Player player) {
         return Config.SET_STATUS_FEE.asInteger();
     }
 }

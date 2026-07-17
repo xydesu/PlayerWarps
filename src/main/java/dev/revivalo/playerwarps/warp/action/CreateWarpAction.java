@@ -28,7 +28,6 @@ public class CreateWarpAction implements WarpAction<Void> {
         HookRegister.ifEnabled(BentoBoxHook.class, bentoBoxHook -> checkers.add(new BentoBoxIslandChecker(bentoBoxHook)));
         HookRegister.ifEnabled(ResidenceHook.class, residenceHook -> checkers.add(new ResidenceChecker(residenceHook)));
         HookRegister.ifEnabled(WorldGuardHook.class, unused -> checkers.add(new WorldGuardChecker()));
-        HookRegister.ifEnabled(TerritoryHook.class, unused -> checkers.add(new TerritoryChecker()));
         HookRegister.ifEnabled(TownyAdvancedHook.class, townyHook -> checkers.add(new TownyChecker(townyHook)));
         HookRegister.ifEnabled(SuperiorSkyBlockHook.class, unused -> checkers.add(new SuperiorSkyBlockChecker()));
         HookRegister.ifEnabled(AngeschossenLandsHook.class, angeschossenLandsHook ->
@@ -87,6 +86,8 @@ public class CreateWarpAction implements WarpAction<Void> {
 
         final Location loc = player.getLocation();
 
+        int fee = getFee(player);
+
         Warp createdWarp = new Warp(
                 new HashMap<String, Object>() {{
                     put("uuid", warpID.toString());
@@ -116,11 +117,13 @@ public class CreateWarpAction implements WarpAction<Void> {
         HookRegister.ifEnabled(BlueMapHook.class, blueMapHook -> blueMapHook.setMarker(createdWarp));
 
         String message;
-        //if (HookRegister.isHookEnabled(HookRegister.getVaultHook())) {
-        message = Lang.WARP_CREATED_WITH_PRICE.asColoredString()
-                .replace("%name%", name)
-                .replace("%price%", String.valueOf(getFee()));
-        //} else message = Lang.WARP_CREATED.asColoredString().replace("%name%", name);
+        if (fee > 0) {
+            message = Lang.WARP_CREATED_WITH_PRICE.asColoredString()
+                    .replace("%name%", name)
+                    .replace("%price%", String.valueOf(fee));
+        } else {
+            message = Lang.WARP_CREATED.asColoredString().replace("%name%", name);
+        }
 
         BaseComponent[] msg = TextComponent.fromLegacyText(message);
         for (BaseComponent bc : msg) {
@@ -146,7 +149,11 @@ public class CreateWarpAction implements WarpAction<Void> {
     }
 
     @Override
-    public int getFee() {
+    public int getFee(Player player) {
+        if (player == null) return Config.WARP_FIXED_PRICE.asInteger();
+        int free = Config.FREE_WARPS.asInteger();
+        int size = PlayerWarpsPlugin.getWarpHandler().getPlayerWarps(player).size();
+        if (size < free) return 0;
         return Config.WARP_FIXED_PRICE.asInteger();
     }
 

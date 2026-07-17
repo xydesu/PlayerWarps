@@ -52,7 +52,7 @@ public class SetAdmissionAction implements WarpAction<String> {
     }
 
     @Override
-    public int getFee() {
+    public int getFee(Player player) {
         return Config.SET_ADMISSION_FEE.asInteger();
     }
 

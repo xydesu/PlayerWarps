@@ -35,7 +35,7 @@ public class FeatureWarpAction implements WarpAction<Long> {
     }
 
     @Override
-    public int getFee() {
+    public int getFee(Player player) {
         return Config.FEATURE_WARP_FEE.asInteger();
     }
 }

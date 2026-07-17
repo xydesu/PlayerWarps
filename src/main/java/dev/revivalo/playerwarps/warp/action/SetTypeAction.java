@@ -38,7 +38,7 @@ public class SetTypeAction implements WarpAction<Category> {
     }
 
     @Override
-    public int getFee() {
+    public int getFee(Player player) {
         return Config.SET_TYPE_FEE.asInteger();
     }
 }

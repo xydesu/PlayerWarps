@@ -42,7 +42,7 @@ public class RenameAction implements WarpAction<String> {
     }
 
     @Override
-    public int getFee() {
+    public int getFee(Player player) {
         return Config.RENAME_WARP_FEE.asInteger();
     }
 }

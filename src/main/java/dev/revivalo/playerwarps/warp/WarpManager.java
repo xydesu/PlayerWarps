@@ -162,7 +162,7 @@ public class WarpManager {
                     event.setCancelled(true);
                     future.complete(event.getMessage());
                     PlayerWarpsPlugin.get().runSync(() -> {
-                        if (!warpAction.hasFee()) new ManageMenu(warp).openFor(player);
+                        if (!warpAction.hasFee(player)) new ManageMenu(warp).openFor(player);
                     });
                     HandlerList.unregisterAll(this);
                 }

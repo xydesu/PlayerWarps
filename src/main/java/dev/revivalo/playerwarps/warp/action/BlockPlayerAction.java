@@ -44,7 +44,7 @@ public class BlockPlayerAction implements WarpAction<String> {
     }
 
     @Override
-    public int getFee() {
+    public int getFee(Player player) {
         return Config.SET_DISPLAY_NAME_FEE.asInteger();
     }
 }
