@@ -28,6 +28,7 @@ public class Warp implements ConfigurationSerializable {
     private String description;
     private String stars;
     private Location location;
+    private String worldName;
     private int rating;
     private int visits;
     private int todayVisits;
@@ -49,7 +50,9 @@ public class Warp implements ConfigurationSerializable {
                 case "display-name": setDisplayName((String) value); break;
                 case "owner-id": setOwner(UUID.fromString((String) value)); break;
                 case "need-verification": setVerificationNeeded((boolean) value); break;
-                case "loc": setLocation((Location) value); break;
+                case "loc":
+                    setLocation(parseLocation(value));
+                    break;
                 case "lore": setDescription((String) value); break;
                 case "type": // category in old versions
                 case "category": setCategory(CategoryManager.getCategoryFromName((String) value)); break;
@@ -91,7 +94,18 @@ public class Warp implements ConfigurationSerializable {
             put("name", getName());
             put("display-name", getDisplayName());
             put("owner-id", getOwner().toString());
-            put("loc", getLocation());
+            if (getLocation() != null) {
+                put("loc", new HashMap<String, Object>() {{
+                    String wName = (getLocation().getWorld() != null) ? getLocation().getWorld().getName() : Warp.this.worldName;
+                    if (wName == null) wName = "unknown";
+                    put("world", wName);
+                    put("x", getLocation().getX());
+                    put("y", getLocation().getY());
+                    put("z", getLocation().getZ());
+                    put("yaw", getLocation().getYaw());
+                    put("pitch", getLocation().getPitch());
+                }});
+            }
             put("lore", getDescription());
             put("item", getMenuItem());
             put("ratings", getRating());
@@ -375,5 +389,61 @@ public class Warp implements ConfigurationSerializable {
 
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
+    }
+
+    private Location parseLocation(Object value) {
+        if (value == null) {
+            return null;
+        }
+        
+        if (value instanceof Location) {
+            return (Location) value;
+        }
+
+        Map<String, Object> mapLoc = null;
+        if (value instanceof org.bukkit.configuration.ConfigurationSection) {
+            mapLoc = ((org.bukkit.configuration.ConfigurationSection) value).getValues(false);
+        } else if (value instanceof Map) {
+            mapLoc = (Map<String, Object>) value;
+        }
+
+        if (mapLoc != null) {
+            org.bukkit.World world = null;
+            String parsedWorldName = null;
+            
+            if (mapLoc.containsKey("world") && mapLoc.get("world") != null) {
+                parsedWorldName = String.valueOf(mapLoc.get("world"));
+                world = PlayerWarpsPlugin.get().getServer().getWorld(parsedWorldName);
+            } 
+            if (world == null && mapLoc.containsKey("world-uid") && mapLoc.get("world-uid") != null) {
+                try {
+                    world = PlayerWarpsPlugin.get().getServer().getWorld(UUID.fromString(String.valueOf(mapLoc.get("world-uid"))));
+                    if (world != null) {
+                        parsedWorldName = world.getName();
+                    }
+                } catch (Exception ignored) {}
+            }
+            if (world == null && mapLoc.containsKey("world_key") && mapLoc.get("world_key") != null) {
+                String wk = String.valueOf(mapLoc.get("world_key"));
+                if (parsedWorldName == null) {
+                    parsedWorldName = wk.contains(":") ? wk.split(":")[1] : wk;
+                }
+                world = PlayerWarpsPlugin.get().getServer().getWorld(wk);
+                if (world == null && wk.contains(":")) {
+                    world = PlayerWarpsPlugin.get().getServer().getWorld(wk.split(":")[1]);
+                }
+            }
+
+            this.worldName = parsedWorldName;
+
+            double x = mapLoc.containsKey("x") ? ((Number) mapLoc.get("x")).doubleValue() : 0;
+            double y = mapLoc.containsKey("y") ? ((Number) mapLoc.get("y")).doubleValue() : 0;
+            double z = mapLoc.containsKey("z") ? ((Number) mapLoc.get("z")).doubleValue() : 0;
+            float yaw = mapLoc.containsKey("yaw") ? ((Number) mapLoc.get("yaw")).floatValue() : 0;
+            float pitch = mapLoc.containsKey("pitch") ? ((Number) mapLoc.get("pitch")).floatValue() : 0;
+            Location loc = new Location(world, x, y, z, yaw, pitch);
+            return loc;
+        }
+        return null;
     }
 }

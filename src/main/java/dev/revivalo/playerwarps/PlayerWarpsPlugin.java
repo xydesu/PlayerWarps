@@ -62,6 +62,7 @@ public final class PlayerWarpsPlugin extends JavaPlugin {
         new UserHandler(this);
 
         setWarpHandler(new WarpManager());
+        CategoryManager.loadCategories();
         setDataManager(new Data());
 
         HookRegister.hook();
@@ -90,8 +91,6 @@ public final class PlayerWarpsPlugin extends JavaPlugin {
                 VersionUtil.setLatestVersion(!isNewerVersion);
             });
         }
-
-        CategoryManager.loadCategories();
 
         registerCommands();
 

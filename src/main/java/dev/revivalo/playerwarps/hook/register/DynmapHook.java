@@ -72,6 +72,7 @@ public class DynmapHook implements Hook<DynmapAPI> {
                     .replace("%owner%", warp.getOwnerName());
 
             Location location = warp.getLocation();
+            if (location.getWorld() == null) return;
             Marker marker = markerSet.createMarker(
                     markerId,
                     markerLabel,

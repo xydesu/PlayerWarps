@@ -98,8 +98,8 @@ public class WarpManager {
                         .getKeys(false)
                         .forEach(warpID -> {
                                     Warp warp = warpSection.getSerializable(warpID, Warp.class);
-                                    if (warp == null) {
-                                        PlayerWarpsPlugin.get().getLogger().info("Error while importing warp " + warpID);
+                                    if (warp == null || warp.getLocation() == null) {
+                                        PlayerWarpsPlugin.get().getLogger().info("Error while importing warp " + warpID + " (possibly unknown world)");
                                         return;
                                     }
 

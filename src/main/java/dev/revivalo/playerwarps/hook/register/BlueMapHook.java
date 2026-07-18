@@ -75,11 +75,13 @@ public class BlueMapHook implements Hook<BlueMapAPI> {
 
             markerSet.getMarkers().put(markerId, marker);
 
-            blueMapAPI.getWorld(warp.getLocation().getWorld()).ifPresent(world -> {
-                for (BlueMapMap map : world.getMaps()) {
-                    map.getMarkerSets().put("playerwarpmarkers", markerSet);
-                }
-            });
+            if (warp.getLocation().getWorld() != null) {
+                blueMapAPI.getWorld(warp.getLocation().getWorld()).ifPresent(world -> {
+                    for (BlueMapMap map : world.getMaps()) {
+                        map.getMarkerSets().put("playerwarpmarkers", markerSet);
+                    }
+                });
+            }
         }
     }
 

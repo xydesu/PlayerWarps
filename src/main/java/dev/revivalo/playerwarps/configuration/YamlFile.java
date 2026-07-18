@@ -39,7 +39,13 @@ public class YamlFile {
 		configuration = new YamlConfiguration();
 
 		try {
-			configuration.load(file);
+			if (file.exists() && file.getName().equals("data.yml")) {
+				String content = new String(java.nio.file.Files.readAllBytes(file.toPath()), java.nio.charset.StandardCharsets.UTF_8);
+				content = content.replace("==: org.bukkit.Location", "is-location: true");
+				configuration.loadFromString(content);
+			} else {
+				configuration.load(file);
+			}
 		} catch (FileNotFoundException ex) {
 		} catch (IOException ex) {
 			PlayerWarpsPlugin.get().getLogger().log(Level.SEVERE, "Cannot load " + file, ex);
