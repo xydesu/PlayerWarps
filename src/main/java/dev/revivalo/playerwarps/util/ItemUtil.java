@@ -8,7 +8,7 @@ import dev.revivalo.playerwarps.hook.register.OraxenHook;
 import dev.triumphteam.gui.builder.item.BaseItemBuilder;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,7 +32,7 @@ public final class ItemUtil {
         return getItem(stack.getType().name(), null);
     }
 
-    public static BaseItemBuilder<?> getItem(String name, Player player) {
+    public static BaseItemBuilder<?> getItem(String name, OfflinePlayer player) {
         if (name == null || name.equalsIgnoreCase("air")) {
             return ItemBuilder.from(name == null ? Material.STONE : Material.AIR);
         }
@@ -55,7 +55,7 @@ public final class ItemUtil {
             return parseTexture(name);
         }
 
-        if (name.equalsIgnoreCase("skullofplayer") && player != null) {
+        if ((name.equalsIgnoreCase("skullofplayer") || name.equalsIgnoreCase("PLAYER_HEAD")) && player != null) {
             return ItemBuilder.skull().owner(player);
         }
 
@@ -68,7 +68,7 @@ public final class ItemUtil {
         return ItemBuilder.from(Material.valueOf(materialStr.toUpperCase(Locale.ENGLISH))).model(data);
     }
 
-    private static BaseItemBuilder<?> parseCustomSkullModel(String name, Player player) {
+    private static BaseItemBuilder<?> parseCustomSkullModel(String name, OfflinePlayer player) {
         int data = Integer.parseInt(extractBetween(name, '{', '}'));
         return ItemBuilder.skull().owner(player).model(data);
     }

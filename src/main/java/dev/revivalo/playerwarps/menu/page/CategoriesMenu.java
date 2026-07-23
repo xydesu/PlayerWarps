@@ -1,5 +1,6 @@
 package dev.revivalo.playerwarps.menu.page;
 
+import dev.revivalo.playerwarps.PlayerWarpsPlugin;
 import dev.revivalo.playerwarps.category.Category;
 import dev.revivalo.playerwarps.category.CategoryManager;
 import dev.revivalo.playerwarps.configuration.file.Config;
@@ -65,9 +66,10 @@ public class CategoriesMenu extends Menu {
                             }}
                     );
 
-                    guiItem = ItemUtil.getItem(warp.getMenuItem() == null
-                                    ? Config.DEFAULT_WARP_ITEM.asString()//, warp.getOwner())
-                                    : warp.getMenuItem().getType().name())
+                    dev.triumphteam.gui.builder.item.BaseItemBuilder<?> builder = warp.getMenuItem() == null
+                            ? ItemUtil.getItem(Config.DEFAULT_WARP_ITEM.asString(), PlayerWarpsPlugin.get().getServer().getOfflinePlayer(warp.getOwner()))
+                            : dev.triumphteam.gui.builder.item.ItemBuilder.from(warp.getMenuItem());
+                    guiItem = builder
                             .setName(TextUtil.colorize(Config.WARP_NAME_FORMAT.asReplacedString(new HashMap<>(getPlaceholders()) {{
                                 put("%warpName%", warp.getDisplayName());
                             }})))

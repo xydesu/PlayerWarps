@@ -42,6 +42,10 @@ public class Warp implements ConfigurationSerializable {
     private ItemStack menuItem;
 
     public Warp(Map<String, Object> map) {
+        if (map.containsKey("owner-id")) {
+            setOwner(UUID.fromString((String) map.get("owner-id")));
+        }
+
         for (String key : map.keySet()) {
             final Object value = map.get(key);
             switch (key){
@@ -58,7 +62,8 @@ public class Warp implements ConfigurationSerializable {
                 case "category": setCategory(CategoryManager.getCategoryFromName((String) value)); break;
                 case "item":
                     if (value instanceof String) {
-                        setMenuItem(ItemUtil.getItem((String) value).build());
+                        org.bukkit.OfflinePlayer offlinePlayer = owner != null ? PlayerWarpsPlugin.get().getServer().getOfflinePlayer(owner) : null;
+                        setMenuItem(ItemUtil.getItem((String) value, offlinePlayer).build());
                     } else {
                         setMenuItem((ItemStack) value);
                     }

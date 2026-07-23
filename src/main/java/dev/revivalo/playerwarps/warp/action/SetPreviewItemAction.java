@@ -24,7 +24,7 @@ public class SetPreviewItemAction implements WarpAction<String> {
             if (item.equalsIgnoreCase("HAND")) {
                 displayItem = new ItemStack(player.getInventory().getItemInMainHand().getType());
             } else {
-                displayItem = new ItemStack(Material.valueOf(item.toUpperCase()));
+                displayItem = dev.revivalo.playerwarps.util.ItemUtil.getItem(item, player).build();
             }
 
             ItemMeta meta = displayItem.getItemMeta();
